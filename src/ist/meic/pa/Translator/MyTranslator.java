@@ -23,9 +23,9 @@ public class MyTranslator implements Translator {
 
 	}
 
-	public void makeTraceable(CtClass cc) throws CannotCompileException{
+	public void makeTraceable(final CtClass cc) throws CannotCompileException{
 		for(CtMethod ctMethod : cc.getDeclaredMethods()){
-			if(ctMethod.getName().equals("getArgs")||ctMethod.getName().equals("getReturn"))
+			if(cc.getSimpleName().equals("Trace") && !ctMethod.getName().equals("print"))
 				continue;
 			ctMethod.instrument(new ExprEditor(){
 				public void edit(MethodCall m) throws CannotCompileException{
@@ -51,7 +51,8 @@ public class MyTranslator implements Translator {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					m.replace("{$_ = $proceed($$);" + 
+					m.replace("{$_ = $proceed($$);" +
+							"	ist.meic.pa.Trace.clear(($w)$_);" + 
 							"  ist.meic.pa.Trace.getReturn(($w)$_, \"" + behaviour + "\", \"" + m.getFileName() + "\", " + m.getLineNumber() + ");}");
 					}
 				}

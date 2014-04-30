@@ -64,5 +64,12 @@ public class Trace {
 			System.err.flush();
 		}
 	}
+	
+	public static void clear(Object object){
+		for(History history : historyList){
+			if(history.getObject().equals(object))
+				historyList.remove(history);
+		}
+	}
 
 }
