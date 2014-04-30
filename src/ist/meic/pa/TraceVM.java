@@ -20,14 +20,14 @@ public class TraceVM {
 				System.err.println("Class name not provided!");
 				return;
 			}
-			if(args.length>1){
+			if(args.length>0){
 				int argsSize = args.length-1;
 				String[] arguments = new String[argsSize];
 				System.arraycopy(args,1,arguments,0,argsSize);
 				cl.run(args[0],arguments );
 			}
-			else
-				cl.run(args[0],null);
+//			else
+//				cl.run(args[0],null);
 		} catch (NotFoundException e) {
 			e.printStackTrace();
 		} catch (CannotCompileException e) {
