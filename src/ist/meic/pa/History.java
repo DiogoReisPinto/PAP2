@@ -2,7 +2,7 @@ package ist.meic.pa;
 
 public class History {
 	
-	public History(Object object, Object behaviour, String fileName, int lineNumber, String condition) {
+	public History(Object object, String behaviour, String fileName, int lineNumber, String condition) {
 		super();
 		this.setObject(object);
 		this.behaviour = behaviour;
@@ -11,7 +11,7 @@ public class History {
 		this.condition = condition;
 	}
 	private Object object;
-	private Object behaviour;
+	private String behaviour;
 	private String fileName;
 	private int lineNumber;
 	private String condition;
@@ -35,6 +35,8 @@ public class History {
 			result = "  -> " + behaviour + " on " + fileName + ":" + lineNumber + "\n";
 		else if(condition.matches("CALL"))
 			result = "  <- " + behaviour + " on " + fileName + ":" + lineNumber + "\n";
+		else
+			result = behaviour + " on " + fileName + ":" + lineNumber + "\n";
 		return result;		
 	}
 	public Object getObject() {

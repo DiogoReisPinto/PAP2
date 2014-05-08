@@ -20,7 +20,7 @@ public class Trace {
 		Iterator<History> it = currentHistory.iterator();
 		while(it.hasNext()){
 			History history = it.next();
-			if(o.equals(history.getObject())){
+			if(o.equals(history.getObject()) || history.getObject().equals("Exception")){
 				if(!tracing){
 					traceInfo.add("Tracing for " + o + "\n");
 					tracing = true;
@@ -38,8 +38,10 @@ public class Trace {
 	}
 	
 	public static void storeHistory(Object object, String behaviour, String fileName, int lineNumber, String condition){
+		if(!tracingComplete){
 		History history = new History(object, behaviour, fileName, lineNumber, condition);
 		historyList.add(history);
+		}
 	}
 	
 	public static void getArgs(Object[] args, String behaviour, String fileName, int lineNumber){

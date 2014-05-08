@@ -23,7 +23,7 @@ public class MyTranslator implements Translator {
 
 	}
 
-	public void makeTraceable(final CtClass cc) throws CannotCompileException{
+	public static void makeTraceable(final CtClass cc) throws CannotCompileException{
 		for(CtMethod ctMethod : cc.getDeclaredMethods()){
 			if(cc.getSimpleName().equals("Trace") && !ctMethod.getName().equals("print"))
 				continue;
