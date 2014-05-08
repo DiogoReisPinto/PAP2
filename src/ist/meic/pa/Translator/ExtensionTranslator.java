@@ -68,7 +68,6 @@ public class ExtensionTranslator implements Translator {
 				public void edit(Cast c) throws CannotCompileException{
 					try {
 						String behaviour = "  Cast to " + c.getType().getName();
-						System.out.println(c.where().getLongName() + c.getLineNumber());
 						c.replace("{ist.meic.pa.Trace.storeHistory($1, \"" + behaviour + "\", \"" + c.getFileName() + "\", " + c.getLineNumber() + ", \"CAST\");"
 //								+ "System.out.println($1);"
 								+ "$_ = $proceed($$);}");
