@@ -21,18 +21,26 @@ class TestExt {
         
         identity(o);
 
-        Trace.print("MyObj");
+        Trace.print(o);
         
         ArrayList<Object> objectList = new ArrayList<Object>();
         objectList.add(o);
         
         try{
+        	
         	objectList.get(3);
-        } catch(IndexOutOfBoundsException e){
+       
+        } 
+        
+        
+        
+        catch(IndexOutOfBoundsException e){
         	o = new String("OtherObj");
         }
-        
+
         Trace.print(o);
+        
+        int i = 1;
         
         Object obj = new String("Object");
         

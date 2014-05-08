@@ -2,6 +2,13 @@ package ist.meic.pa.Translator;
 
 
 import javassist.*;
+import javassist.bytecode.BadBytecode;
+import javassist.bytecode.CodeIterator;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.analysis.ControlFlow;
+import javassist.bytecode.analysis.ControlFlow.Block;
+import javassist.bytecode.analysis.ControlFlow.*;
+import javassist.bytecode.stackmap.BasicBlock;
 import javassist.expr.ExprEditor;
 import javassist.expr.Handler;
 import javassist.expr.Cast;
@@ -27,20 +34,36 @@ public class ExtensionTranslator implements Translator {
 	
 	public void makeTraceable(final CtClass cc) throws CannotCompileException{
 		MyTranslator.makeTraceable(cc);
-		if(!cc.getSimpleName().matches("Trace") && !cc.getSimpleName().matches("History")){
-//			for(CtMethod ctMethod : cc.getDeclaredMethods()){
-//				ctMethod.
-//			}
+		if(!cc.getSimpleName().matches("Trace") && !cc.getSimpleName().matches("History") && !cc.getSimpleName().matches("ExceptionHistory")){
+			for(CtMethod ct : cc.getDeclaredMethods()){
+					ControlFlow cf = null;
+					try {
+						cf = new ControlFlow(ct);
+					} catch (BadBytecode e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					for(BasicBlock b : cf.basicBlocks()){
+						for(Catcher c : ((Block) b).catchers()){
+							MethodInfo mi = ct.getMethodInfo();
+							String name = c.type();
+							int blockStart = c.block().position();
+							int blockEnd = blockStart + c.block().length();
+							ct.insertBefore("ist.meic.pa.Trace.addException(\"" + name + "\", " + mi.getLineNumber(blockStart) + ", " + mi.getLineNumber(blockEnd) + ", \"" + cc.getClassFile().getSourceFile() + "\");");
+						}
+					}
+				}
+			
 			cc.instrument(new ExprEditor(){
 				public void edit(Handler h) throws CannotCompileException{
 					Object exception = null;
 					try {
-						exception = h.getType().getSimpleName();
+						exception = h.getType().getName();
 					} catch (NotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					h.insertBefore("ist.meic.pa.Trace.storeHistory(\"Exception\", \"  Caught " + exception + "\", \"" + h.getFileName() + "\", " + h.getLineNumber() + ", \"CAST\");");
+					h.insertBefore("ist.meic.pa.Trace.storeHistory(\"" + exception + "\", \"  Handling " + exception + "\", \"" + h.getFileName() + "\", " + h.getLineNumber() + ", \"CAST\");");
 				}
 				public void edit(Cast c) throws CannotCompileException{
 					try {
