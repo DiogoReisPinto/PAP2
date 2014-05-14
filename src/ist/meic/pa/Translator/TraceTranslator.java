@@ -7,7 +7,13 @@ import javassist.expr.MethodCall;
 import javassist.expr.NewExpr;
 import ist.meic.pa.Trace;
 
-public class MyTranslator implements Translator {
+
+/**
+ * The Class TraceTranslator.
+ * Implementation of a translator to each class loaded that will inject code
+ * for making possible to trace objects
+ */
+public class TraceTranslator implements Translator {
 
 	@Override
 	public void onLoad(ClassPool arg0, String arg1) throws NotFoundException,
@@ -23,6 +29,14 @@ public class MyTranslator implements Translator {
 
 	}
 
+	
+	/**
+	 * method for injecting, to each class and each method of it, code for 
+	 * store information about arguments used in each method call, constructors called 
+	 * and returned objects in method calls
+	 * @param cc as the CtClass for which we want to inject code
+	 * @throws CannotCompileException
+	 */
 	public static void makeTraceable(final CtClass cc) throws CannotCompileException{
 		for(CtMethod ctMethod : cc.getDeclaredMethods()){
 			if(cc.getSimpleName().equals("Trace") && !ctMethod.getName().equals("print"))
@@ -34,7 +48,6 @@ public class MyTranslator implements Translator {
 					try {
 						behaviour = m.getMethod().getLongName();
 					} catch (NotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					m.replace("{ist.meic.pa.Trace.getArgs($args, \"" + behaviour + "\", \"" + m.getFileName() + "\", " + m.getLineNumber() + ");" + 
@@ -48,7 +61,6 @@ public class MyTranslator implements Translator {
 					try {
 						behaviour = m.getConstructor().getLongName();
 					} catch (NotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					m.replace("{$_ = $proceed($$);" +

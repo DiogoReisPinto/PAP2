@@ -1,16 +1,21 @@
 package ist.meic.pa;
 
-import ist.meic.pa.Translator.MyTranslator;
+
+import ist.meic.pa.Translator.TraceTranslator;
 import javassist.*;
 
+/**
+ * The Class TraceVM.
+ * Class for associating an translator to every class that is loaded. Is responsible for
+ * receiving in its main method a program name and its arguments and start its execution.
+ * It's our entry class for this project, starting all the trace process.
+ */
 public class TraceVM {
 	
 	private static ClassPool cp;
 	
-
-	
 	public static void main(String[] args){
-	    Translator t = new MyTranslator();
+	    Translator t = new TraceTranslator();
 	    cp = ClassPool.getDefault();
 	    Loader cl=new Loader();
 	    
@@ -26,8 +31,6 @@ public class TraceVM {
 				System.arraycopy(args,1,arguments,0,argsSize);
 				cl.run(args[0],arguments );
 			}
-//			else
-//				cl.run(args[0],null);
 		} catch (NotFoundException e) {
 			e.printStackTrace();
 		} catch (CannotCompileException e) {

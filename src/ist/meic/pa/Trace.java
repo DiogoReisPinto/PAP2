@@ -6,12 +6,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * The Class Trace.
+ * Class for keeping information about all the trace information of each object in the program. 
+ * Keeps a list of History objects with information of each object traced in the program.
+ * Provides methods to add and retrieve information of each object traced.
+ */
 public class Trace {
 
 	private static List<History> historyList = new CopyOnWriteArrayList<History>();
 	private static List<ExceptionHistory> exceptions = new CopyOnWriteArrayList<ExceptionHistory>();
 	private static boolean tracingComplete = false;
 	
+	/**
+	 * method for printing the trace information of an object o
+	 * looks in the history all the references to an object and adds a string
+	 * explaining that reference to an array to be used as argument in the tracePrint method
+	 * @argument Object o as the object to print the trace information
+	 */
 	public static void print(Object o){
 		tracingComplete = true;
 		boolean traced = false;
@@ -50,6 +62,13 @@ public class Trace {
 		traceInfo.clear();
 	}
 	
+	/**
+	 * method for storing information to the trace history 
+	 * @param object object of which information belongs
+	 * @param behaviour string with the name of the method
+	 * @param fileName name of the file 
+	 * @param lineNumber lineNumber of the file
+	 */
 	public static void storeHistory(Object object, String behaviour, String fileName, int lineNumber, String condition){
 		if(!tracingComplete){
 		History history = new History(object, behaviour, fileName, lineNumber, condition);
@@ -57,6 +76,13 @@ public class Trace {
 		}
 	}
 	
+	/**
+	 * method for storing argument of a function call to the trace history
+	 * @param args arguments in the function call
+	 * @param behaviour string with the name of the method to which arguments belong
+	 * @param fileName name of the file where the arguments were passed
+	 * @param lineNumber lineNumber of the file where the argument were passed
+	 */
 	public static void getArgs(Object[] args, String behaviour, String fileName, int lineNumber){
 		if(!tracingComplete){
 		for(Object arg : args){
@@ -66,6 +92,13 @@ public class Trace {
 		}
 	}
 	
+	/**
+	 * method for storing return of a function call to the trace history
+	 * @param arg returned object
+	 * @param behaviour string with the name of the method
+	 * @param fileName name of the file where return happened
+	 * @param lineNumber lineNumber of the file where return happened
+	 */
 	public static void getReturn(Object arg, String behaviour, String fileName, int lineNumber){
 		if(arg != null && !tracingComplete){
 			History history = new History(arg, behaviour, fileName, lineNumber, "CALL");
@@ -73,6 +106,11 @@ public class Trace {
 		}
 	}
 	
+	
+	/**
+	 * prints a requested trace information
+	 * @param traceInfo information to print
+	 */
 	public static void tracePrint(List<String> traceInfo){
 		for(String info : traceInfo){
 			System.err.print(info);
@@ -80,6 +118,11 @@ public class Trace {
 		}
 	}
 	
+	
+	/**
+	 * deletes all the information of an object in the history list
+	 * @param object object to delete information
+	 */
 	public static void clear(Object object){
 		for(History history : historyList){
 			if(history.getObject().equals(object))
@@ -87,11 +130,24 @@ public class Trace {
 		}
 	}
 	
+	/**
+	 * method for adding information of catched exception
+	 * @param name name of the exception
+	 * @param blockStart line number where the exception catch started
+	 * @param blockEnd line number where the exception catch ended
+	 * @param fileName file name where catch occurred
+	 */
 	public static void addException(String name, int blockStart, int blockEnd, String fileName){
 		ExceptionHistory eh = new ExceptionHistory(name, blockStart, blockEnd, fileName);
 		exceptions.add(eh);
 	}
 
+	
+	/**
+	 * method to detect which history members belong to a catch of an exception and return that exception's name
+	 * @param history an history object that represents an object on trace information
+	 * @return string with exception name
+	 */
 	public static String inException(History history){
 		String exceptionName = null;
 		for(ExceptionHistory eh : exceptions){
@@ -102,6 +158,12 @@ public class Trace {
 		return exceptionName;
 	}
 	
+	
+	/**
+	 * return history object of exception with name name
+	 * @param name name of the exception
+	 * @return history object of the exception with name name
+	 */
 	public static History getException(String name){
 		History hi = null;
 		for(History h : historyList){
